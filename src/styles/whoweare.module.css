@@ -1,0 +1,11 @@
+.fadeQuote {
+    opacity: 0;
+    transition: opacity 1s ease;
+    font-style: italic;
+    font-size: 1.25rem;
+    margin-top: 2rem;
+  }
+  .visible {
+    opacity: 1;
+  }
+  

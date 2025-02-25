@@ -1,18 +1,21 @@
 .leaders {
     display: flex;
-    flex-direction: row;
-    /* align-items: center; */
-}
-
-.leaders li {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 16px;
-    width: 300px;
-}
-
-.leaders li p {
-    white-space: normal;
-    overflow-wrap: break-word;
-}
+    flex-wrap: wrap;
+    gap: 2rem;
+    list-style: none;
+    padding: 2rem;
+  }
+  
+  .leaders li {
+    flex: 0 1 250px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .leaders li img {
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+  }
+  
