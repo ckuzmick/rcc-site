@@ -5,7 +5,17 @@ const fetchLeaders =
   unstable_cache(
     async () => {
       const sheetId = process.env.SHEET_ID;
-      const keys = JSON.parse(process.env.GOOGLE_API_CREDS);
+      
+      // Fix: Handle the credentials parsing more safely
+      let keys;
+      try {
+        // Remove any escaped characters and parse
+        const credsString = process.env.GOOGLE_API_CREDS.replace(/\\n/g, '\n');
+        keys = JSON.parse(credsString);
+      } catch (error) {
+        console.error('Error parsing credentials:', error);
+        throw new Error('Invalid credentials format');
+      }
 
       const auth = await google.auth.getClient({
         projectId: keys.project_id,
@@ -21,7 +31,9 @@ const fetchLeaders =
 
       const response = await sheets.spreadsheets.values.get({
         spreadsheetId: sheetId,
-        range: `Leaders!A2:F`, // Adjust the range as needed
+        range: `Leaders!A2:F`,
+        valueRenderOption: 'FORMATTED_VALUE',
+        dateTimeRenderOption: 'FORMATTED_STRING'
       });
 
       console.log("Fetched leader data from Google Sheets");
@@ -30,19 +42,21 @@ const fetchLeaders =
       const leaders = [];
 
       for (const row of rows) {
-        leaders.push({
-          name: row[0],
-          title: row[4],
-          desc: row[1],
-          image: row[2],
-          yog: row[3],
-          email: row[5],
-        });
+        if (row.length >= 6) {
+          leaders.push({
+            name: row[0] || 'Unknown',
+            title: row[4] || 'No Title',
+            desc: row[1] || '',
+            image: row[2] || '',
+            yog: row[3] || '',
+            email: row[5] || ''
+          });
+        }
       }
 
       return leaders;
-    }
-    , { tags: ["all"], revalidate: 5000 }
-  ); // Revalidate every 5 minutes
+    },
+    { tags: ["all"], revalidate: 5000 }
+  );
 
 export default fetchLeaders;
